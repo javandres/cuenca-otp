@@ -1,0 +1,1 @@
+docker run -p 8080:8080 -v $PWD/graphs/cuenca:/var/otp/graphs -e JAVA_OPTIONS=-Xmx4G urbica/otp --server --autoScan --verbose
