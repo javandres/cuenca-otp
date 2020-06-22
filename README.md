@@ -1,4 +1,4 @@
-# Urbica OpenTripPlanner Docker image
+# OpenTripPlanner Docker image
 
 [OpenTripPlanner](http://www.opentripplanner.org/) (OTP) is a family of open source software projects that provide passenger information and transportation network analysis services. The core server-side Java component finds itineraries combining transit, pedestrian, bicycle, and car segments through networks built from widely available, open standard OpenStreetMap and GTFS data. This service can be accessed directly via its web API or using a range of Javascript client libraries, including modern reactive modular components targeting mobile platforms.
 
@@ -11,6 +11,10 @@ docker run \
   -v $PWD:/graphs \
   -e JAVA_OPTIONS=-Xmx4G \
   urbica/otp --build /graphs
+```
+or
+```shell
+sh ./build.sh
 ```
 
 Run OTP server:
@@ -32,19 +36,17 @@ docker run \
   -e JAVA_OPTIONS=-Xmx4G \
   urbica/otp --basePath /data --server --analyst --autoScan --verbose
 ```
+...or run with docker-compose
+
+```shell
+docker-compose up
+
+```
+
 
 ## Basic Tutorial
 
 Based on [OpenTripPlanner Basic Tutorial](https://opentripplanner.readthedocs.io/en/latest/Basic-Tutorial/).
-
-### Get some data
-
-Get GTFS for Transit Schedules and Stops
-
-```shell
-mkdir -p ./graphs/portland
-wget "http://developer.trimet.org/schedule/gtfs.zip" -O ./graphs/portland/trimet.gtfs.zip
-```
 
 Get OSM extract for Streets
 
@@ -53,28 +55,11 @@ wget http://download.geofabrik.de/north-america/us/oregon-latest.osm.pbf
 osmconvert oregon-latest.osm.pbf -b=-123.043,45.246,-122.276,45.652 --complete-ways -o=portland.pbf
 mv portland.pbf ./graphs/portland
 ```
-
-### Start up OTP
-
-Build graph
+or
 
 ```shell
-docker run \
-  -v $PWD/graphs:/var/otp/graphs \
-  -e JAVA_OPTIONS=-Xmx4G \
-  urbica/otp --build /var/otp/graphs/portland
+sh ./downloadosm.sh
 ```
-
-Run OTP server:
-
-```shell
-docker run \
-  -p 8080:8080 \
-  -v $PWD/graphs:/var/otp/graphs \
-  -e JAVA_OPTIONS=-Xmx4G \
-  urbica/otp --server --autoScan --verbose
-```
-
 The graph build operation should take about one minute to complete, and then you'll see a Grizzly server running message. At this point you have an OpenTripPlanner server running locally and can open http://localhost:8080/ in a web browser. You should be presented with a web client that will interact with your local OpenTripPlanner instance.
 
 This map-based user interface is in fact sending HTTP GET requests to the OTP server running on your local machine. It can be informative to watch the HTTP requests and responses being generated using the developer tools in your web browser.
